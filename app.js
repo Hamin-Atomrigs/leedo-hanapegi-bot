@@ -1,6 +1,12 @@
 const { Client, Intents, MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
+const express = require('express');
+const app = express();
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+
+app.get('/',(req, res) => res.send('Hello World'));
+
+app.listen(3000, ()=> console.log('Example Server for Intro Bot'));
 
 client.on("ready", () => {
     const row = new MessageActionRow()
@@ -27,7 +33,7 @@ client.on('interactionCreate', async interaction => {
 
     const encodedUser = encodeURI(user);
 
-	if (interaction.customId === 'apply_button') {
+	if (interaction.customId === 'apply_button' && role) {
         const row = new MessageActionRow()
         .addComponents(
             new MessageButton()
@@ -36,7 +42,9 @@ client.on('interactionCreate', async interaction => {
             .setStyle('LINK'),
     );
 		await interaction.reply({ content: 'Click the link below to join the Hanapegi game.```링크를 클릭하시면 하나빼기 게임으로 조인합니다.```\n', ephemeral: true, components: [row] });
-	}
+	} else {
+    await interaction.reply({ content: 'You are not currently assigned a team role. Please create a ticket and contact supporters.```현재 팀 롤이 부여되어 있지 않습니다. 티켓을 만들어서 서포터에게 문의하세요.```', ephemeral: true});
+  }
 });
 
 client.login(process.env.TOKEN_ID);
